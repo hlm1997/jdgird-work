@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://mybatis.org/dtd/mybatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.EmpDao">
+
+    <resultMap id="aa" type="emp">
+        <id property="id" column="eid"></id>
+        <result property="name" column="ename"></result>
+        <result property="bir" column="ebir"></result>
+        <result property="age" column="eage"></result>
+        <association property="dept" javaType="dept">
+            <id property="id" column="did"></id>
+            <result property="name" column="dname"></result>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultType="emp">
+        select * from emp
+    </select>
+
+    <select id="findAllEmpAndDept" resultMap="aa">
+        select e.id eid,e.name ename,e.bir ebir,e.age eage,d.id did,d.name dname
+        from emp e
+        left JOIN dept d
+        on e.deptid=d.id
+    </select>
+    <select id="findAllByPage" resultMap="aa">
+        select e.id eid,e.name ename,e.bir ebir,e.age eage,d.id did,d.name dname
+        from (select id,name,bir,age,deptid from emp limit #{start},#{rows}) e
+        left JOIN dept d
+        on e.deptid=d.id
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(id) from emp
+    </select>
+
+
+    <insert id="save" parameterType="emp">
+
+        insert into emp (id,name,bir,age,deptid) values(#{id},#{name},#{bir},#{age},#{dept.id})
+    </insert>
+
+    <update id="update" parameterType="emp">
+        update emp set name=#{name},age=#{age},bir=#{bir},deptid=#{dept.id} where id =#{id}
+    </update>
+
+    <delete id="delete">
+        delete from emp where id=#{id}
+    </delete>
+</mapper>
